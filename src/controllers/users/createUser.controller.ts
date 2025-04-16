@@ -1,9 +1,9 @@
-import { FastifyReply, FastifyRequest, RawReplyDefaultExpression, RawRequestDefaultExpression, RequestPayload } from "fastify";
-import { IService } from "../../services/interface/Iservice";
-import { IController } from "../interface/Icontroller";
-import HttpStatus from "http-status"
-import SuccessMessage from "../../view/successMessage";
+import { FastifyReply, FastifyRequest } from "fastify";
+import HttpStatus from "http-status";
+import { IService } from "../../services/Iservice";
 import ErrorMessage from "../../view/ErrorMessage";
+import SuccessMessage from "../../view/successMessage";
+import { IController } from "../Icontroller";
 
 
 export default class CreateUserController implements IController {
@@ -16,7 +16,6 @@ export default class CreateUserController implements IController {
     async handler(req: FastifyRequest, reply: FastifyReply): Promise<void> {
         try {
             const user = await this.service.execute(req.body)
-
             reply
             .code(HttpStatus.CREATED)
             .send(new SuccessMessage("User created successfully", user).create());
