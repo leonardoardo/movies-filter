@@ -1,5 +1,4 @@
-import { FastifyReply, FastifyRequest } from "fastify";
-
 export interface IController {
-    handler(req: FastifyRequest, reply: FastifyReply): Promise<void>;
+    interceptor?: any;
+    handler(req: any, reply: any): Promise<void>;
 }
