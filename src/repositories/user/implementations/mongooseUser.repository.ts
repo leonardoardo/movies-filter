@@ -1,9 +1,11 @@
-import IUserRepository from "./user.repository";
+import IUserRepository from "../interfaces/user.repository";
 import mongoose, { mongo } from "mongoose";
-import { UserModel, UserSchema } from "../../database/mongoose/user.schema";
-import { UserMapper } from "../../mappers/user.mapper";
-import UserEntity from "../../models/user.entity";
+import { UserModel, UserSchema } from "../../../database/mongoose/user.schema";
+import { UserMapper } from "../../../mappers/user.mapper";
+import UserEntity from "../../../models/user.entity";
+import { injectable } from "tsyringe";
 
+@injectable()
 export default class MongooseUserRepository implements IUserRepository {
     userModel = mongoose.model("User", UserSchema);
 

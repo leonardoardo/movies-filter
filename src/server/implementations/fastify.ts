@@ -1,5 +1,5 @@
 import fastify, { FastifyInstance } from "fastify";
-import IServer, { IRoutes } from "./server";
+import IServer, { IRoutes } from "../interfaces/server";
 
 export default class FastifyServer implements IServer {
     port: number;
@@ -21,7 +21,6 @@ export default class FastifyServer implements IServer {
     registerRoutes(routes: IRoutes[]) {
         this.routes = routes;
         for (const route of routes) {
-            console.log("🚀 ~ FastifyServer ~ registerRoutes ~ route:", route);
             this.server.route({
                 method: route.method,
                 url: route.url,

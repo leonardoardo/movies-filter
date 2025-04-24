@@ -1,7 +1,9 @@
-import UserEntity from "../../models/user.entity";
-import IUserRepository from "./user.repository";
+import { injectable } from "tsyringe";
+import UserEntity from "../../../models/user.entity";
+import IUserRepository from "../interfaces/user.repository";
 import { v7 as uuid } from "uuid";
 
+@injectable()
 export default class MemoryUserRepository implements IUserRepository {
     users = new Map<string, UserEntity>();
 
@@ -16,6 +18,8 @@ export default class MemoryUserRepository implements IUserRepository {
 
             if (user.id) {
                 this.users.set(user.id, user);
+
+                console.log("This users ->", this.users.values());
                 return user;
             }
         } catch (err) {
@@ -60,6 +64,7 @@ export default class MemoryUserRepository implements IUserRepository {
 
         return null;
     }
+
     async delete(userId: string): Promise<void> {
         throw new Error("Method not implemented.");
     }

@@ -1,4 +1,5 @@
+import { IService } from "../../services/Iservice";
+
 export interface IController {
-    interceptor?: any;
     handler(req: any, reply: any): Promise<void>;
 }

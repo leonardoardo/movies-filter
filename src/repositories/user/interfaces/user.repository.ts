@@ -1,4 +1,4 @@
-import UserEntity from "../../models/user.entity";
+import UserEntity from "../../../models/user.entity";
 
 export default interface IUserRepository {
     create(user: UserEntity): Promise<UserEntity | null>;
