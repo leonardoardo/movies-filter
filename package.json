@@ -31,6 +31,8 @@
     "homepage": "https://github.com/leonardoardo/movies-filter#readme",
     "dependencies": {
         "@apollo/server": "^4.12.0",
+        "@types/bcrypt": "^5.0.2",
+        "bcrypt": "^5.1.1",
         "fastify": "^5.3.0",
         "graphql": "^16.10.0",
         "http-status": "^2.1.0",
