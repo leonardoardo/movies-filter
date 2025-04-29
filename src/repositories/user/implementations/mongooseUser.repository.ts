@@ -1,15 +1,20 @@
-import IUserRepository from "../interfaces/user.repository";
-import mongoose, { mongo } from "mongoose";
-import { UserModel, UserSchema } from "../../../database/mongoose/user.schema";
+import mongoose from "mongoose";
+import { injectable } from "tsyringe";
+import { UserSchema } from "../../../database/mongoose/user.schema";
 import { UserMapper } from "../../../mappers/user.mapper";
 import UserEntity from "../../../models/user.entity";
-import { injectable } from "tsyringe";
+import IUserRepository from "../interfaces/user.repository";
+import ICryptographyService from "../../../services/v1/cryptography/interfaces/cryptography.interface";
+import { InternalServerError } from "../../../shared/errors/implementations/internalServerError";
 
 @injectable()
 export default class MongooseUserRepository implements IUserRepository {
     userModel = mongoose.model("User", UserSchema);
 
-    constructor(url: string) {
+    constructor(
+        url: string,
+        private readonly cryptographyService: ICryptographyService,
+    ) {
         mongoose
             .connect(url)
             .then(() => console.log("Connected to MongoDB"))
@@ -18,14 +23,20 @@ export default class MongooseUserRepository implements IUserRepository {
             });
     }
 
-    async create(user: UserEntity): Promise<UserEntity | null> {
+    async create(user: UserEntity): Promise<UserEntity> {
         try {
-            const newUser = await new this.userModel(user).save();
+            const userData = {
+                ...user,
+                password: await this.cryptographyService.hash(user.password),
+            };
+            const newUser = await new this.userModel(userData).save();
+
             return UserMapper.toEntity(newUser);
-        } catch (err) {
-            console.log("Error creating user", err);
+        } catch (err: any) {
+            throw new InternalServerError(
+                "Error creating user: " + err.message,
+            );
         }
-        return null;
     }
 
     async findById(userId: string): Promise<any> {
@@ -34,10 +45,11 @@ export default class MongooseUserRepository implements IUserRepository {
             if (user) {
                 return UserMapper.toEntity(user);
             }
-        } catch (err) {
-            console.log("Error getting user by id", err);
+        } catch (err: any) {
+            throw new InternalServerError(
+                "Error getting user by id" + err.message,
+            );
         }
-        return null;
     }
     async update(userId: string, userData: any): Promise<any> {
         try {
@@ -50,15 +62,19 @@ export default class MongooseUserRepository implements IUserRepository {
             if (updatedUser) {
                 return UserMapper.toEntity(updatedUser);
             }
-        } catch (err) {
-            console.log("Error updating user", err);
+        } catch (err: any) {
+            throw new InternalServerError(
+                "Error updating user: " + err.message,
+            );
         }
     }
     async delete(userId: string): Promise<void> {
         try {
             await this.userModel.findByIdAndDelete(userId);
-        } catch (err) {
-            console.log("Error deleting user", err);
+        } catch (err: any) {
+            throw new InternalServerError(
+                "Error deleting user: " + err.message,
+            );
         }
     }
 }

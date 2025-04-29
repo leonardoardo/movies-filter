@@ -1,8 +1,9 @@
 import UserEntity from "../../../models/user.entity";
+import ICryptographyService from "../../../services/v1/cryptography/interfaces/cryptography.interface";
 
 export default interface IUserRepository {
-    create(user: UserEntity): Promise<UserEntity | null>;
-    findById(id: string): Promise<UserEntity | null>;
-    update(id: string, user: UserEntity): Promise<UserEntity | null>;
+    create(user: UserEntity): Promise<UserEntity>;
+    findById(id: string): Promise<UserEntity>;
+    update(id: string, user: UserEntity): Promise<UserEntity>;
     delete(id: string): Promise<void>;
 }
