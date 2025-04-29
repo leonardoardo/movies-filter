@@ -1,14 +1,14 @@
 // src/controllers/v1/implementations/users/createUser.controller.ts
 import { FastifyReply, FastifyRequest } from "fastify";
 import HttpStatus from "http-status";
+import { inject, injectable } from "tsyringe";
+import CreateUserDTO from "../../../../dtos/users/createUser.dto";
+import { ICreateUserService } from "../../../../services/v1/user/interfaces/createUser.interface";
+import { TOKENS } from "../../../../shared/container/tokens";
+import { DomainError } from "../../../../shared/errors/interface/error";
 import ErrorMessage from "../../../../view/errorMessage";
 import SuccessMessage from "../../../../view/successMessage";
 import { IController } from "../../interfaces/Icontroller";
-import { inject, injectable } from "tsyringe";
-import { ICreateUserService } from "../../../../services/v1/user/interfaces/createUser.interface";
-import CreateUserDTO from "../../../../dtos/users/createUser.dto";
-import { TOKENS } from "../../../../shared/container/tokens";
-import { DomainError } from "../../../../shared/errors/interface/error";
 
 @injectable()
 export default class CreateUserControllerV1 implements IController {

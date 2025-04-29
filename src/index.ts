@@ -6,17 +6,17 @@ import { registerDependencies } from "./shared/container";
 registerDependencies();
 
 import FastifyServer from "./server/implementations/fastify";
+import { loadActiveRoutes } from "./routes/loadRoutes";
 
-import { serverRoutesV1 } from "./routes/v1/server.routes";
-import { usersRoutesV1 } from "./routes/v1/users.routes";
+async function bootstrap() {
+    const routes = await loadActiveRoutes();
 
-const routes = [...serverRoutesV1, ...usersRoutesV1];
+    const HOST = process.env.HOST || "localhost";
+    const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
-const HOST = process.env.HOST || "localhost";
-const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+    const server = new FastifyServer(PORT, HOST);
+    server.registerRoutes(routes);
+    server.start();
+}
 
-const server = new FastifyServer(PORT, HOST);
-server.registerRoutes(routes);
-registerDependencies();
-
-server.start();
+bootstrap();

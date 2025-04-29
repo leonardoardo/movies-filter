@@ -24,7 +24,9 @@ export default class MemoryUserRepository implements IUserRepository {
 
             return user;
         } catch (err: any) {
-            throw new InternalServerError("Error creating user" + err.message);
+            throw new InternalServerError(
+                "Error creating user: " + err.message,
+            );
         }
     }
 
@@ -36,7 +38,22 @@ export default class MemoryUserRepository implements IUserRepository {
             return user;
         } catch (err: any) {
             throw new InternalServerError(
-                "Error finding user by id" + err?.message,
+                "Error finding user by id: " + err?.message,
+            );
+        }
+    }
+
+    async findByEmail(email: string): Promise<UserEntity> {
+        try {
+            const user = Array.from(this.users.values()).find(
+                (user) => user.email === email,
+            );
+
+            if (!user) throw new UserNotFoundError("User not found");
+            return user;
+        } catch (err: any) {
+            throw new InternalServerError(
+                "Error finding user by email: " + err?.message,
             );
         }
     }
@@ -57,7 +74,9 @@ export default class MemoryUserRepository implements IUserRepository {
             this.users.set(userId, updatedUser);
             return updatedUser;
         } catch (err: any) {
-            throw new InternalServerError("Error updating user" + err?.message);
+            throw new InternalServerError(
+                "Error updating user: " + err?.message,
+            );
         }
     }
 
@@ -69,7 +88,9 @@ export default class MemoryUserRepository implements IUserRepository {
 
             this.users.delete(userId);
         } catch (err: any) {
-            throw new InternalServerError("Error deleting user" + err?.message);
+            throw new InternalServerError(
+                "Error deleting user: " + err?.message,
+            );
         }
     }
 }

@@ -6,6 +6,7 @@ import UserEntity from "../../../models/user.entity";
 import IUserRepository from "../interfaces/user.repository";
 import ICryptographyService from "../../../services/v1/cryptography/interfaces/cryptography.interface";
 import { InternalServerError } from "../../../shared/errors/implementations/internalServerError";
+import chalk from "chalk";
 
 @injectable()
 export default class MongooseUserRepository implements IUserRepository {
@@ -17,9 +18,11 @@ export default class MongooseUserRepository implements IUserRepository {
     ) {
         mongoose
             .connect(url)
-            .then(() => console.log("Connected to MongoDB"))
+            .then(() => console.log(chalk.bold.green("✅ MongoDB connected")))
             .catch((err) => {
-                console.log("Error connecting to MongoDB", err);
+                console.error(
+                    chalk.bold.red("Error connecting to MongoDB", err),
+                );
             });
     }
 
@@ -34,23 +37,33 @@ export default class MongooseUserRepository implements IUserRepository {
             return UserMapper.toEntity(newUser);
         } catch (err: any) {
             throw new InternalServerError(
-                "Error creating user: " + err.message,
+                "Error creating user: : " + err.message,
             );
         }
     }
 
-    async findById(userId: string): Promise<any> {
+    async findById(userId: string): Promise<UserEntity> {
         try {
             const user = await this.userModel.findById(userId);
-            if (user) {
-                return UserMapper.toEntity(user);
-            }
+
+            return user ? UserMapper.toEntity(user) : UserMapper.toEntity({});
         } catch (err: any) {
             throw new InternalServerError(
-                "Error getting user by id" + err.message,
+                "Error getting user by id: " + err.message,
             );
         }
     }
+
+    async findByEmail(email: string): Promise<UserEntity> {
+        try {
+            const user = await this.userModel.findOne({ email });
+
+            return user ? UserMapper.toEntity(user) : UserMapper.toEntity({});
+        } catch (err: any) {
+            throw new InternalServerError("Method not implemented.");
+        }
+    }
+
     async update(userId: string, userData: any): Promise<any> {
         try {
             const updatedUser = await this.userModel.findByIdAndUpdate(
@@ -64,16 +77,17 @@ export default class MongooseUserRepository implements IUserRepository {
             }
         } catch (err: any) {
             throw new InternalServerError(
-                "Error updating user: " + err.message,
+                "Error updating user: : " + err.message,
             );
         }
     }
+
     async delete(userId: string): Promise<void> {
         try {
             await this.userModel.findByIdAndDelete(userId);
         } catch (err: any) {
             throw new InternalServerError(
-                "Error deleting user: " + err.message,
+                "Error deleting user: : " + err.message,
             );
         }
     }

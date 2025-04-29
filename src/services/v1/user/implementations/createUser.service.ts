@@ -11,22 +11,18 @@ import { InternalServerError } from "../../../../shared/errors/implementations/i
 export default class CreateUserService implements ICreateUserService {
     constructor(
         @inject(TOKENS.IUserRepository)
-        readonly repository: IUserRepository,
+        readonly userRepository: IUserRepository,
     ) {}
 
     async execute(userData: CreateUserDTO): Promise<any> {
-        if (!this.repository) {
+        if (!this.userRepository) {
             throw new InternalServerError("Repository not initialized");
         }
 
-        try {
-            const user = await this.repository.create(userData);
-            if (!user) {
-                throw new UserAlreadyExistsError();
-            }
-            return user;
-        } catch (err: any) {
-            throw new InternalServerError(err.message);
+        const user = await this.userRepository.create(userData);
+        if (!user) {
+            throw new UserAlreadyExistsError();
         }
+        return user;
     }
 }

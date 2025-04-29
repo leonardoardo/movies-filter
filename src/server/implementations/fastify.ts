@@ -1,24 +1,26 @@
 import fastify, { FastifyInstance } from "fastify";
-import IServer, { IRoutes } from "../interfaces/server";
+import IServer, { Routes } from "../interfaces/server";
+import { IRoutes } from "../../routes/routes";
+import chalk from "chalk";
 
 export default class FastifyServer implements IServer {
     port: number;
     host: string;
-    routes: IRoutes[];
+    routes: Routes;
     server: FastifyInstance;
 
     constructor(port: number, host?: string) {
         this.port = port;
         this.host = host || "localhost";
         this.routes = [];
-        this.server = fastify({ logger: true });
+        this.server = fastify({ logger: false });
     }
 
     start() {
         this.listen();
     }
 
-    registerRoutes(routes: IRoutes[]) {
+    registerRoutes(routes: Routes) {
         this.routes = routes;
         for (const route of routes) {
             this.server.route({
@@ -34,10 +36,16 @@ export default class FastifyServer implements IServer {
             { port: this.port, host: this.host },
             (err, address) => {
                 if (err) {
-                    this.server.log.error(err);
+                    console.error(
+                        chalk.bold.red(`❌ Server failed to start:`),
+                        err,
+                    );
                     process.exit(1);
                 }
-                this.server.log.info(`Server listening at ${address}`);
+                console.log(
+                    chalk.bold.green(`🚀 Server is running at:`),
+                    chalk.underline.blue(address),
+                );
             },
         );
     }
@@ -46,10 +54,13 @@ export default class FastifyServer implements IServer {
         this.server
             .close()
             .then(() => {
-                this.server.log.info("Server closed");
+                console.log(chalk.bold.yellow("🛑 Server closed gracefully"));
             })
             .catch((err) => {
-                this.server.log.error(err);
+                console.error(
+                    chalk.bold.red("❌ Error while closing server:"),
+                    err,
+                );
             });
     }
 }

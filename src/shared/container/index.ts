@@ -4,6 +4,7 @@ import MongooseUserRepository from "../../repositories/user/implementations/mong
 import CreateUserService from "../../services/v1/user/implementations/createUser.service";
 import { TOKENS } from "./tokens";
 import BcryptCryptographyService from "../../services/v1/cryptography/implementations/bcryptCryptography.service";
+import JwtAuthenticationService from "../../services/v1/auth/implementations/jwtAuthenticate.interface";
 
 export function registerDependencies() {
     container.register(TOKENS.IUserCreateService, {
@@ -27,4 +28,8 @@ export function registerDependencies() {
                 ),
         });
     }
+
+    container.register(TOKENS.IAuthenticateService, {
+        useClass: JwtAuthenticationService,
+    });
 }

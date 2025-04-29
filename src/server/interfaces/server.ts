@@ -1,17 +1,15 @@
-export interface IRoutes {
-    method: string;
-    url: string;
-    handler: (req: any, res: any) => Promise<void>;
-}
+import { IRoutes } from "../../routes/routes";
+
+export type Routes = IRoutes["routes"];
 
 export default interface IServer {
     port: number;
     host: string;
-    routes: IRoutes[];
+    routes: Routes;
     server: any;
 
     start: () => void;
-    registerRoutes: (routes: IRoutes[]) => void;
+    registerRoutes: (routes: Routes) => void;
     listen: () => void;
     close?: () => void;
 }
